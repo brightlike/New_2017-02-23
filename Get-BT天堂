@@ -1,0 +1,70 @@
+#-*-coding:utf-8-*-
+'''
+Created on 2016��6��9��
+
+@author: liu
+'''
+from __future__ import unicode_literals
+import urllib
+import urllib2
+import re
+from time import sleep
+n= 1
+f = file("BTurl.txt","w+")
+fa = file("false_log.txt","w+")
+fb = file("film_name.txt","w+")
+fbt = file("BTtor.txt","w+")
+user_id = 20000
+def unique(lst): 
+    return list(set(lst))
+def bt_save(file_name):                       
+    #sleep(0.1)
+    response = urllib2.urlopen(req)
+    the_page = response.read()
+    #print the_page
+    magnet= re.findall(r"(?<=href=\"/download).+?(?=\")|(?<=href=\').+?(?=\')",the_page)
+    magnet = unique(magnet)
+    filmname= re.findall(r'<title>(.*?)</title>',the_page)
+    filmname = unique(filmname)
+    film= filmname[0]
+    print film
+    fbt.write(film)
+    fbt.write("\n")  
+    for url in magnet:
+        fbt.write('http://www.bttiantang.com/download' + url)
+        fbt.write("\n")
+
+'''
+def bt_store(file_name):                       
+    sleep(0.01)
+    response = urllib2.urlopen(req)
+    the_page = response.read()
+    #print the_page
+    filmname= re.findall(r'<title>(.*?)</title>',the_page)
+    filmname = unique(filmname)
+    film= filmname[0]
+    print film 
+    fb.write(film)
+    fb.write("\n")
+    '''
+for user_id in range(23412,140000):
+    print user_id
+    req ="http://www.bttiantang.com/subject/%s.html"%user_id
+    statusCode=urllib.urlopen(req).code
+    print statusCode
+    if statusCode == 200 :
+        print 'Lucky one!' + '\n' + str(user_id)
+        f.write(str(user_id)+ ' ' + req)
+        f.write('\n')
+        #bt_store('film_name.txt')
+        bt_save('BTurl.txt')
+        print "The %s url is in the room!"%n
+        n+=1         
+    else: 
+        fa.write(str(user_id)+'\n')
+        print str(user_id)
+f.close() 
+fa.close()
+fb.close()
+fbt.close()      
+         
