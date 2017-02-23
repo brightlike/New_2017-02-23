@@ -1,0 +1,36 @@
+#coding=utf-8
+'''
+Created on 2016��7��6��
+
+@author: liu
+'''
+import urllib
+import re
+import random
+import datetime
+
+user_id = 3599891436
+def getHtml(url): 
+    page = urllib.urlopen(url)
+    html = page.read()
+    #print html
+    return html
+def getImg(html):
+    reg = r'src="(.+?\.jpg)" pic_ext'
+    imgre = re.compile(reg)
+    imglist = re.findall(imgre,html)
+    #print imglist
+    x=random.randint(1,999)
+    for imgurl in imglist:
+        now = datetime.datetime.now()
+        t=now.second
+        urllib.urlretrieve(imgurl,'C:\Users\liu\git\AIM\spyjpg\getjpg\GetM\ID %s-%s-%s.jpg' % (user_id,t,x))
+        x+=i
+def getPage(page_id):           
+    for i in xrange(30):
+        page_id = i
+        print "第%s页"%page_id
+for i in xrange(30):
+    getPage(i)  
+    html = getHtml("http://tieba.baidu.com/p/%s?pn=%s"%(user_id,i))
+    print getImg(html)
