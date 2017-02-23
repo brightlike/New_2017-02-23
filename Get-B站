@@ -1,0 +1,123 @@
+#-*-coding:utf-8-*-
+'''
+Created on 2016年7月18日
+
+@author: liu
+'''
+from __future__ import unicode_literals
+import re
+import urllib
+import urllib2
+import random
+from time import sleep
+n=1
+f = file("Burl.txt","w+")
+fbt = file("Bdld.txt","w+")
+user_id = 2756666
+next_id = 4305768
+'''
+def ip_change(iplis):
+    url = 'http://www.whatismyip.com.tw'
+    iplist = iplis
+    proxy_support = urllib2.ProxyHandler({'http':random.choice(iplist)})
+    opener = urllib2.build_opener(proxy_support)
+    opener.addheaders = [('User-Agent','Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36')]
+    urllib2.install_opener(opener)
+    response = urllib2.urlopen(url)
+    html = response.read()
+    print(html)
+    '''
+def unique(lst): 
+    return list(set(lst))
+def MultiTry(req):
+    maxTryNum=100
+    #Mozilla/5.0 (Windows NT 10.0; WOW64; rv:47.0) Gecko/20100101 Firefox/47.0
+    user_agent ='Mozilla/5.0(Windows NT 6.1; WOW64; rv:7.0a1) Gecko/20110623 Firefox/7.0a1 Fennec/7.0a1'  
+    headers = { 'User-Agent' : user_agent }  
+    for tries in range(maxTryNum):  
+        try:
+            url=urllib2.urlopen(req).read()
+            req = urllib2.Request(url, headers = headers)
+            break  
+        except:  
+            if tries <(maxTryNum-1):  
+                continue  
+            else:  
+                print "Has tried %d times to access url %s, all failed!"%(maxTryNum,url)  
+                break         
+def bt_save(file_name):
+    sleep(0.5*random.randint(1,30))                         
+    response = urllib2.urlopen(req)
+    the_page = response.read()
+    for i in range(1,10000):
+        if len(the_page)==0:
+            print '空页面请等待或切换网络' 
+            sleep(20)
+            #iplis=['121.31.112.75:9797','5.220.143.1:8080','122.235.208.127:8998','115.69.219.162:3128','104.131.165.109:8118','180.250.207.162:8080']
+            #ip_change(iplis)
+            status_Code(req)
+            response = urllib2.urlopen(req)
+            the_page = response.read()
+            continue
+        else:
+            #print the_page       
+            link_list= re.findall(r"(?<=href=\')(\/DownLoad\/Cid\/.*?[0-9]{1,10})",the_page)
+            link_list = unique(link_list)
+            #print link_list
+            for url in link_list:
+                links = "http://www.bilibilijj.com" + url
+                response = urllib2.urlopen(links)
+                MultiTry(links)
+                links = response.read()
+                #print links
+                magnet= re.findall(r"(?<=href=\")\w.+?(?=\")|(?<=href=\')\w.+?(?=\')",links)
+                magnet = unique(magnet)
+                #print magnet
+                filmname= re.findall(r'<title>(.*?)</title>',the_page)
+                filmname = unique(filmname)
+                film= filmname[0]
+                print film
+                if len(filmname) == 0:
+                    print 'lose'
+                    print '没有找到一只羊'
+                else:  
+                    fbt.write(film)
+                    fbt.write("\n")
+                    for link in magnet:
+                        #print link  
+                        fbt.write(link)
+                        fbt.write("\n")
+            break
+        break
+def status_Code(req):
+    statusCode=urllib.urlopen(req).code
+    if statusCode == 200 :  
+        print 'Nice punch!' + '\n' + str(user_id)
+        f.write(str(user_id)+ ' ' + req)
+        f.write('\n')
+        bt_save('Bdld.txt')
+    elif statusCode == 10060 or statusCode == 10053 or statusCode == 10054:
+        i=1
+        while(i<100):
+            if statusCode == 200:
+                print 'Next kiss!' + '\n' + str(user_id)
+                f.write(str(user_id)+ ' ' + req)
+                f.write('\n')
+                bt_save('Bdld.txt')
+                break
+            sleep(0.1)
+            i+=1
+        print 'Snowman %s'%i  
+    else: 
+        print 'This is a sad story!'
+for user_id in range(76709,6000000):
+    #print user_id
+    req ="http://www.bilibilijj.com/video/av%s"%user_id
+    MultiTry(req)
+    #print statusCode
+    status_Code(req)
+    print "The %s url is in the room!"%n
+    n+=1
+f.close() 
+fbt.close()      
+         
